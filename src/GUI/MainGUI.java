@@ -88,9 +88,10 @@ public class MainGUI extends JFrame {
             Values.EMAIL_FIELD = txtEmailField.getText();
             Values.PASSWORD_FIELD = txtPasswordField.getText();
             ArrayList<String> emails = ReadWriteFile.getAllEmails();
-            ArrayList<String> passwords = ReadWriteFile.getAllPasswords();
+            ArrayList<String> passwords = new ArrayList<>();
+
             int emailSize = emails.size();
-            int sizeOfElement = 20;
+            int sizeOfElement = 10;
             int index = 0;
             for (int i = 0; i < emailSize; i += sizeOfElement) {
                 List<String> splitEmails = emails.subList(i, i + sizeOfElement);

