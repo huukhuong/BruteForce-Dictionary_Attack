@@ -18,7 +18,9 @@ public class ReadWriteFile {
             File myObj = new File(Values.INPUT_USER_FILE);
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
-                emails.add(myReader.nextLine());
+                String email = myReader.nextLine();
+                if (email.length() > 0)
+                    emails.add(email);
             }
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -34,7 +36,9 @@ public class ReadWriteFile {
             File myObj = new File(Values.INPUT_PASSWORD_FILE);
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
-                passwords.add(myReader.nextLine());
+                String password = myReader.nextLine();
+                if (password.length() > 0)
+                    passwords.add(password);
             }
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -48,17 +52,6 @@ public class ReadWriteFile {
         try {
             FileWriter myWriter = new FileWriter(Values.OUTPUT_FILE, true);
             myWriter.write(user.toString());
-            myWriter.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
-
-    public static void writeAnyFile(String path, String value) {
-        try {
-            FileWriter myWriter = new FileWriter(path, true);
-            myWriter.write(value + "\n");
             myWriter.close();
         } catch (IOException e) {
             System.out.println("An error occurred.");

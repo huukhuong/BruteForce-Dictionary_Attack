@@ -6,7 +6,10 @@ import Ultils.Values;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class MainGUI extends JFrame {
 
@@ -71,7 +74,7 @@ public class MainGUI extends JFrame {
         lblDescription.setForeground(Color.RED);
         pnDescription.add(lblDescription);
         pnMain.add(pnDescription);
-        
+
         JPanel pnButton = new MyPanel();
         btnAttack = new JButton("Attack to this website");
         btnAttack.setFont(new Font("", Font.PLAIN, 20));
@@ -88,14 +91,18 @@ public class MainGUI extends JFrame {
             Values.EMAIL_FIELD = txtEmailField.getText();
             Values.PASSWORD_FIELD = txtPasswordField.getText();
             ArrayList<String> emails = ReadWriteFile.getAllEmails();
-            ArrayList<String> passwords = new ArrayList<>();
-
-            int emailSize = emails.size();
-            int sizeOfElement = 10;
+            ArrayList<String> passwords = ReadWriteFile.getAllPasswords();
+            int chunkSize = emails.size() / 5;
             int index = 0;
-            for (int i = 0; i < emailSize; i += sizeOfElement) {
-                List<String> splitEmails = emails.subList(i, i + sizeOfElement);
-                new AttackGUI(splitEmails, passwords, index++).showWindow();
+            AtomicInteger counter = new AtomicInteger();
+            final Collection<List<String>> partitionedList =
+                    emails
+                            .stream()
+                            .collect(Collectors.groupingBy(i -> counter.getAndIncrement() / chunkSize))
+                            .values();
+            System.out.println(partitionedList.size());
+            for (List<String> subList : partitionedList) {
+                new AttackGUI(subList, passwords, index++).showWindow();
             }
             disposeFrame();
         });

